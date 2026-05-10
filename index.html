@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday!</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue: #5795c9;
+    --pink: #eb98bc;
+    --blue-light: #d4e8f7;
+    --pink-light: #fce4ef;
+    --blue-dark: #3a6fa0;
+    --pink-dark: #c9638e;
+    --yellow: #ffd166;
+    --mint: #b8f0d5;
+  }
+
+  html, body {
+    height: 100%;
+    font-family: 'Nunito', sans-serif;
+    overflow: hidden;
+  }
+
+  /* ── BACKGROUNDS ── */
+  .page {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  #page1 {
+    background: linear-gradient(135deg, #c8dff5 0%, #daeaf8 40%, #e8f4fd 70%, #d4e8f7 100%);
+  }
+
+  #page2 {
+    background: linear-gradient(135deg, #b8d5f2 0%, #cce2f8 40%, #daeaf8 70%, #c8dff5 100%);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(40px);
+  }
+
+  #page2.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateY(0);
+  }
+
+  #page1.hide {
+    opacity: 0;
+    transform: translateY(-40px);
+    pointer-events: none;
+  }
+
+  /* ── FLOATING DECORATIONS ── */
+  .deco {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+    font-size: 2rem;
+    animation: floatUp linear infinite;
+    opacity: 0.55;
+  }
+
+  @keyframes floatUp {
+    0%   { transform: translateY(0) rotate(0deg); opacity: 0.55; }
+    100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
+  }
+
+  /* ── STARS bg ── */
+  .star {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: twinkle 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes twinkle {
+    from { opacity: 0.2; transform: scale(0.8); }
+    to   { opacity: 0.9; transform: scale(1.3); }
+  }
+
+  /* ── TITLE ── */
+  .title-wrap {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    margin-bottom: 1.4rem;
+    animation: popIn 0.7s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.5) translateY(-20px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .title-wrap h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    background: linear-gradient(135deg, var(--blue-dark), var(--blue), var(--pink-dark));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 1px;
+    line-height: 1.1;
+    filter: drop-shadow(0 2px 0 rgba(87,149,201,0.25));
+  }
+
+  .title-wrap p {
+    font-size: clamp(0.95rem, 2.2vw, 1.2rem);
+    font-weight: 700;
+    color: var(--blue-dark);
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── PHOTO AREA ── */
+  .photos-row {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 1.8rem;
+  }
+
+  .photo-wrap {
+    position: relative;
+    transition: transform 0.7s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  #wrap1 { transform: translateX(0); }
+  #wrap2 { transform: translateX(0); }
+
+  #wrap1.slide-right { transform: translateX(48px); }
+  #wrap2.slide-left  { transform: translateX(-48px); }
+
+  .photo-frame {
+    width: clamp(110px, 16vw, 160px);
+    height: clamp(130px, 19vw, 188px);
+    border-radius: 20px;
+    border: 4px solid var(--blue);
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 6px 24px rgba(87,149,201,0.22), 0 2px 6px rgba(235,152,188,0.18);
+    position: relative;
+    transition: transform 0.3s ease;
+  }
+
+  #wrap2 .photo-frame { border-color: var(--blue-dark); box-shadow: 0 6px 24px rgba(58,111,160,0.28), 0 2px 6px rgba(87,149,201,0.2); transition: border-color 0.35s ease, box-shadow 0.35s ease, transform 0.3s ease; }
+
+  .photo-frame:hover { transform: rotate(-2deg) scale(1.04); }
+  #wrap2 .photo-frame:hover { transform: rotate(2deg) scale(1.04); }
+
+  /* ── PINK FLASH on click ── */
+  #wrap2.pink-flash .photo-frame {
+    border-color: var(--pink-dark) !important;
+    box-shadow: 0 6px 28px rgba(201,99,142,0.45), 0 2px 8px rgba(235,152,188,0.3) !important;
+  }
+  #wrap2.pink-flash .photo-placeholder {
+    background: linear-gradient(135deg, var(--pink-light), #fff) !important;
+    color: var(--pink-dark) !important;
+  }
+  #wrap2.pink-flash .photo-badge {
+    background: var(--pink-dark) !important;
+    box-shadow: 0 2px 8px rgba(201,99,142,0.5) !important;
+  }
+  .see-btn.pink-flash {
+    background: linear-gradient(135deg, var(--pink), var(--pink-dark)) !important;
+    box-shadow: 0 6px 22px rgba(235,152,188,0.55), 0 2px 6px rgba(201,99,142,0.25) !important;
+  }
+  .see-btn.pink-flash::before { opacity: 0 !important; }
+  #page1.pink-flash {
+    background: linear-gradient(135deg, #fce8f3 0%, #daeaf8 40%, #fce8f3 70%, #fce8f3 100%) !important;
+    transition: background 0.4s ease;
+  }
+  .arrow-mid.pink-flash line { stroke: var(--pink) !important; }
+  .arrow-mid.pink-flash polygon { fill: var(--pink-dark) !important; }
+
+  .photo-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .photo-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--blue-light), #fff);
+    color: var(--blue);
+    font-size: 0.8rem;
+    font-weight: 700;
+    gap: 6px;
+  }
+
+  #wrap2 .photo-placeholder { background: linear-gradient(135deg, var(--blue-light), #fff); color: var(--blue-dark); }
+
+  .photo-placeholder svg { width: 40px; height: 40px; opacity: 0.5; }
+
+  .photo-badge {
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--blue);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 3px 12px;
+    border-radius: 20px;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+    box-shadow: 0 2px 8px rgba(87,149,201,0.35);
+  }
+
+  #wrap2 .photo-badge { background: var(--blue-dark); box-shadow: 0 2px 8px rgba(58,111,160,0.4); }
+
+  /* ── ARROW BETWEEN PHOTOS ── */
+  .arrow-mid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    margin: 0 1.2rem;
+    position: relative;
+  }
+
+  .dash-line {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+
+  .dash-line svg {
+    overflow: visible;
+  }
+
+  /* ── CTA BUTTON ── */
+  .cta-wrap {
+    position: relative;
+    z-index: 2;
+    animation: popIn 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.3s both;
+  }
+
+  .see-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+    color: #fff;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 800;
+    padding: 14px 32px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    box-shadow: 0 6px 20px rgba(87,149,201,0.45), 0 2px 4px rgba(87,149,201,0.2);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .see-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--blue-dark), #1e4d75);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: inherit;
+  }
+
+  .see-btn:hover::before { opacity: 1; }
+  .see-btn:hover { transform: scale(1.05) translateY(-2px); box-shadow: 0 10px 28px rgba(58,111,160,0.55), 0 4px 8px rgba(87,149,201,0.3); }
+  .see-btn:active { transform: scale(0.97); }
+
+  .see-btn span, .see-btn .btn-arrow { position: relative; z-index: 1; }
+
+  .btn-arrow {
+    width: 34px;
+    height: 34px;
+    background: rgba(255,255,255,0.22);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+  }
+
+  .see-btn:hover .btn-arrow { transform: translateX(4px); }
+
+  /* pulse ring */
+  .pulse-ring {
+    position: absolute;
+    inset: -4px;
+    border-radius: 50px;
+    border: 2px solid var(--blue);
+    opacity: 0;
+    animation: pulseRing 2s ease-out infinite;
+  }
+
+  @keyframes pulseRing {
+    0%   { opacity: 0.6; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.12); }
+  }
+
+  /* ── PAGE 2 ── */
+  .inv-wrap {
+    position: relative;
+    z-index: 2;
+    width: min(480px, 88vw);
+    animation: popIn 0.8s cubic-bezier(0.34,1.56,0.64,1) 0.15s both;
+  }
+
+  .inv-frame {
+    width: 100%;
+    border-radius: 24px;
+    border: 5px solid var(--blue);
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 10px 40px rgba(87,149,201,0.4), 0 4px 12px rgba(58,111,160,0.22);
+    aspect-ratio: 4/5;
+    position: relative;
+  }
+
+  .inv-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .inv-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(160deg, var(--blue-light) 0%, #c8dff5 100%);
+    color: var(--blue-dark);
+    gap: 12px;
+  }
+
+  .inv-placeholder svg { width: 64px; height: 64px; opacity: 0.45; }
+  .inv-placeholder p { font-size: 1rem; font-weight: 700; }
+
+  .back-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: 2px solid var(--blue);
+    color: var(--blue);
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    padding: 9px 22px;
+    border-radius: 50px;
+    cursor: pointer;
+    margin-top: 1.2rem;
+    transition: all 0.2s ease;
+  }
+
+  .back-btn:hover { background: var(--blue); color: #fff; transform: translateX(-3px); }
+
+  /* ── CONFETTI ── */
+  .confetti-piece {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    pointer-events: none;
+    z-index: 999;
+    animation: confettiFall linear forwards;
+  }
+
+  @keyframes confettiFall {
+    0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(105vh) rotate(720deg); opacity: 0.3; }
+  }
+
+  /* ── BALLOONS ── */
+  .balloon {
+    position: fixed;
+    bottom: -80px;
+    z-index: 1;
+    animation: riseUp linear forwards;
+    pointer-events: none;
+  }
+
+  @keyframes riseUp {
+    0%   { bottom: -80px; opacity: 1; }
+    90%  { opacity: 1; }
+    100% { bottom: 110vh; opacity: 0; }
+  }
+
+  .balloon svg { filter: drop-shadow(1px 2px 4px rgba(0,0,0,0.08)); }
+
+  /* ── FOOTER ── */
+  .footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    text-align: center;
+    padding: 10px 16px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--blue-dark);
+    background: rgba(200,223,245,0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    letter-spacing: 0.2px;
+    border-top: 1px solid rgba(87,149,201,0.2);
+  }
+
+  .footer a {
+    color: var(--blue-dark);
+    font-weight: 800;
+    text-decoration: none;
+    border-bottom: 1.5px solid var(--pink);
+    padding-bottom: 1px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+
+  .footer a:hover {
+    color: var(--pink-dark);
+    border-color: var(--pink-dark);
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ PAGE 1 ══ -->
+<div class="page" id="page1">
+
+  <div class="title-wrap">
+    <h1>🎂 Happy Birthday! 🎉</h1>
+    <p>To our Little Prince &amp; Princess</p>
+  </div>
+
+  <div class="photos-row">
+    <div class="photo-wrap" id="wrap1">
+      <div class="photo-frame">
+        <img id="img1" src="1.png" alt="Birthday child 1"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+        <div class="photo-placeholder" style="display:none">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="6" y="10" width="36" height="28" rx="4"/>
+            <circle cx="24" cy="21" r="6"/>
+            <path d="M10 38c0-7.7 6.3-14 14-14s14 6.3 14 14"/>
+          </svg>
+          <span>1.png</span>
+        </div>
+      </div>
+      <div class="photo-badge">VIYAAN</div>
+    </div>
+
+    <!-- animated dashed arrow -->
+    <div class="arrow-mid">
+      <svg width="90" height="28" viewBox="0 0 90 28">
+        <line x1="4" y1="14" x2="86" y2="14"
+          stroke="#5795c9" stroke-width="2.5" stroke-dasharray="6 4"
+          stroke-linecap="round">
+          <animate attributeName="stroke-dashoffset" from="0" to="-20"
+            dur="0.8s" repeatCount="indefinite"/>
+        </line>
+        <polygon points="86,8 98,14 86,20" fill="#eb98bc"/>
+      </svg>
+      <svg width="90" height="28" viewBox="0 0 90 28" style="transform:scaleX(-1)">
+        <line x1="4" y1="14" x2="86" y2="14"
+          stroke="#eb98bc" stroke-width="2.5" stroke-dasharray="6 4"
+          stroke-linecap="round">
+          <animate attributeName="stroke-dashoffset" from="0" to="-20"
+            dur="0.8s" repeatCount="indefinite"/>
+        </line>
+        <polygon points="86,8 98,14 86,20" fill="#5795c9"/>
+      </svg>
+    </div>
+
+    <div class="photo-wrap" id="wrap2">
+      <div class="photo-frame">
+        <img id="img2" src="2.png" alt="Birthday child 2"
+          onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+        <div class="photo-placeholder" style="display:none">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.8">
+            <rect x="6" y="10" width="36" height="28" rx="4"/>
+            <circle cx="24" cy="21" r="6"/>
+            <path d="M10 38c0-7.7 6.3-14 14-14s14 6.3 14 14"/>
+          </svg>
+          <span>2.png</span>
+        </div>
+      </div>
+      <div class="photo-badge">VIYANA</div>
+    </div>
+  </div>
+
+  <div class="cta-wrap">
+    <div class="pulse-ring"></div>
+    <button class="see-btn" id="seeBtn" onclick="goToPage2()">
+      <span>Your Special Invitation Awaits</span>
+      <div class="btn-arrow">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </div>
+    </button>
+  </div>
+
+</div>
+
+<!-- ══ PAGE 2 ══ -->
+<div class="page" id="page2">
+
+  <div class="title-wrap">
+    <h1>🎈 Double the Joy, Double the Fun! 🎈</h1>
+  </div>
+
+  <div class="inv-wrap">
+    <div class="inv-frame">
+      <img src="invitation.jpg" alt="Birthday Invitation"
+        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+      <div class="inv-placeholder" style="display:none">
+        <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect x="8" y="8" width="48" height="48" rx="6"/>
+          <path d="M8 24l24 16 24-16"/>
+          <line x1="8" y1="24" x2="8" y2="56"/>
+          <line x1="56" y1="24" x2="56" y2="56"/>
+        </svg>
+        <p>invitation.jpg</p>
+      </div>
+    </div>
+  </div>
+
+  <button class="back-btn" onclick="goToPage1()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M19 12H5M12 19l-7-7 7-7"/>
+    </svg>
+    Back
+  </button>
+
+</div>
+
+<footer class="footer">
+  Copyright &copy; 2026 &mdash; <a href="https://ravindu0816.github.io/Ravindu-De-Silva/" target="_blank" rel="noopener">Ravindu De Silva</a>
+</footer>
+
+<script>
+  /* ── STARS ── */
+  const starColors = ['#5795c9','#3a6fa0','#5795c9','#b8d5f2','#eb98bc'];
+  for (let i = 0; i < 32; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    s.style.cssText = `
+      left:${Math.random()*100}%;
+      top:${Math.random()*100}%;
+      background:${starColors[i%starColors.length]};
+      width:${5+Math.random()*7}px;
+      height:${5+Math.random()*7}px;
+      animation-delay:${Math.random()*3}s;
+      animation-duration:${1.5+Math.random()*2}s;
+    `;
+    document.body.appendChild(s);
+  }
+
+  /* ── FLOATING EMOJIS ── */
+  const emojis = ['🎈','🎉','⭐','🌟','🎂','🌸','🎊','✨','🍭','🦋'];
+  function spawnDeco() {
+    const d = document.createElement('div');
+    d.className = 'deco';
+    d.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    d.style.cssText = `
+      left:${Math.random()*100}%;
+      bottom:-3rem;
+      font-size:${1.2+Math.random()*1.5}rem;
+      animation-duration:${7+Math.random()*10}s;
+      animation-delay:0s;
+    `;
+    document.body.appendChild(d);
+    setTimeout(() => d.remove(), 18000);
+  }
+  for (let i = 0; i < 10; i++) setTimeout(spawnDeco, i*800);
+  setInterval(spawnDeco, 2200);
+
+  /* ── CONFETTI ── */
+  const confettiColors = ['#5795c9','#3a6fa0','#b8d5f2','#5795c9','#eb98bc','#ffd166','#fff'];
+  const pinkConfetti   = ['#eb98bc','#c9638e','#fce4ef','#f4a0c8','#ff77aa','#fff','#eb98bc'];
+  function burst(count, mode) {
+    const cols = mode === 'pink' ? pinkConfetti : confettiColors;
+    for (let i = 0; i < count; i++) {
+      const c = document.createElement('div');
+      c.className = 'confetti-piece';
+      const size = 6 + Math.random()*8;
+      c.style.cssText = `
+        left:${Math.random()*100}%;
+        top:0;
+        width:${size}px;
+        height:${size}px;
+        background:${cols[Math.floor(Math.random()*cols.length)]};
+        border-radius:${Math.random()>0.5?'50%':'2px'};
+        animation-duration:${2+Math.random()*2.5}s;
+        animation-delay:${Math.random()*0.8}s;
+      `;
+      document.body.appendChild(c);
+      setTimeout(() => c.remove(), 4500);
+    }
+  }
+  burst(28);
+
+  /* ── BALLOONS ── */
+  const bColors = ['#5795c9','#3a6fa0','#b8d5f2','#5795c9','#eb98bc'];
+  function spawnBalloon() {
+    const b = document.createElement('div');
+    b.className = 'balloon';
+    const col = bColors[Math.floor(Math.random()*bColors.length)];
+    const size = 36 + Math.random()*20;
+    b.style.cssText = `
+      left:${5+Math.random()*90}%;
+      animation-duration:${8+Math.random()*8}s;
+      animation-delay:${Math.random()*2}s;
+    `;
+    b.innerHTML = `<svg width="${size}" height="${size*1.3}" viewBox="0 0 60 80">
+      <ellipse cx="30" cy="28" rx="22" ry="26" fill="${col}" opacity="0.88"/>
+      <ellipse cx="22" cy="18" rx="6" ry="8" fill="white" opacity="0.25"/>
+      <line x1="30" y1="54" x2="30" y2="80" stroke="${col}" stroke-width="1.5"/>
+      <circle cx="30" cy="54" r="2.5" fill="${col}"/>
+    </svg>`;
+    document.body.appendChild(b);
+    setTimeout(() => b.remove(), 18000);
+  }
+  for (let i = 0; i < 5; i++) setTimeout(spawnBalloon, i*1200);
+  setInterval(spawnBalloon, 3500);
+
+  /* ── TRANSITIONS ── */
+  function goToPage2() {
+    const w1 = document.getElementById('wrap1');
+    const w2 = document.getElementById('wrap2');
+    const btn = document.getElementById('seeBtn');
+    const p1  = document.getElementById('page1');
+    const arrowMid = document.querySelector('.arrow-mid');
+
+    btn.classList.add('pink-flash');
+    w2.classList.add('pink-flash');
+    p1.classList.add('pink-flash');
+    arrowMid.classList.add('pink-flash');
+
+    burst(20, 'pink');
+    setTimeout(() => {
+      w1.classList.add('slide-right');
+      w2.classList.add('slide-left');
+      burst(40);
+      setTimeout(() => {
+        p1.classList.add('hide');
+        document.getElementById('page2').classList.add('active');
+        burst(50);
+      }, 550);
+    }, 380);
+  }
+
+  function goToPage1() {
+    document.getElementById('page2').classList.remove('active');
+    const p1 = document.getElementById('page1');
+    p1.classList.remove('hide');
+    setTimeout(() => {
+      document.getElementById('wrap1').classList.remove('slide-right');
+      const w2 = document.getElementById('wrap2');
+      w2.classList.remove('slide-left');
+      w2.classList.remove('pink-flash');
+      document.getElementById('seeBtn').classList.remove('pink-flash');
+      p1.classList.remove('pink-flash');
+      document.querySelector('.arrow-mid').classList.remove('pink-flash');
+    }, 400);
+  }
+</script>
+</body>
+</html>
